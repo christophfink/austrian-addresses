@@ -9,11 +9,11 @@ look-up queries for the closest address for any given point.
 
 ## Licenses
 
-The code in this repository is licensed under [GNU General Public License,
+The *code* in this repository is licensed under [GNU General Public License,
 version 3 (GPLv3)](https://gplv3.fsf.org/). 
 
-The data [available for
+The *data* [available for
 download](https://christophfink.github.io/austrian-addresses/austrian-addresses-voronoi.gpkg.zip)
 are licensed under the [Open Database License
-(ODbL)](https://wiki.openstreetmap.org/wiki/Open_Database_License), as the data
-is derived from OSM (data copyright OSM contributors).
+(ODbL)](https://wiki.openstreetmap.org/wiki/Open_Database_License), as they are
+derived from OSM (data copyright OSM contributors).
