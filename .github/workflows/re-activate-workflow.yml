@@ -1,0 +1,31 @@
+# vim: set tabstop=2 softtabstop=2 shiftwidth=2 expandtab:
+
+name: Reactivate scheduled workflow
+on:
+  workflow_call:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "1 2 */59 * *"
+
+permissions:
+  contents: write
+
+jobs:
+  reactivate-scheduled-workflow:
+    runs-on: ubuntu-latest
+
+    steps:
+      - run: |
+          curl -v -L \
+          -X PUT \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.SCHEDULE_TOKEN}}" \
+          https://api.github.com/repos/christophfink/austrian-addresses/actions/workflows/create-vector-tiles.yml/enable
+      - run: |
+          curl -v -L \
+          -X PUT \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.SCHEDULE_TOKEN}}" \
+          https://api.github.com/repos/christophfink/austrian-addresses/actions/workflows/re-activate-workflow.yml/enable
