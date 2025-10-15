@@ -329,7 +329,6 @@ def download_housenumbers(clip_polygon, postcode_areas, municipalities):
                         addresses[tag].append(None)
 
     addresses = geopandas.GeoDataFrame(addresses, crs="EPSG:4326")
-    addresses["postcode"] = addresses["postcode"].astype("Int64")  # Int64 is nullable
     addresses["geometry"] = addresses.normalize()
     addresses = addresses.drop_duplicates(["geometry"])
     addresses = addresses.drop_duplicates(["street", "housenumber", "postcode", "city"])
