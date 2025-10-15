@@ -57,7 +57,7 @@ NUTS_AREAS = [
 ]
 CLIP_TO_ADM0 = "Österreich"
 OUTPUT_FILENAME = pathlib.Path(__file__).parent / "austrian-addresses.gpkg"
-WAITING_TIME = datetime.timedelta(minutes=3).total_seconds()
+WAITING_TIME = datetime.timedelta(minutes=1).total_seconds()
 POSTCODE_NOTE_RE = re.compile("(?P<post_code>[0-9]{4}) (?P<city>.*)$")
 
 
@@ -328,9 +328,8 @@ def download_housenumbers(clip_polygon, postcode_areas, municipalities):
                     else:
                         addresses[tag].append(None)
 
-
     addresses = geopandas.GeoDataFrame(addresses, crs="EPSG:4326")
-    addresses["postcode"] = addresses["postcode"].astype("int")
+    addresses["postcode"] = addresses["postcode"].astype("Int64")  # Int64 is nullable
     addresses["geometry"] = addresses.normalize()
     addresses = addresses.drop_duplicates(["geometry"])
     addresses = addresses.drop_duplicates(["street", "housenumber", "postcode", "city"])
@@ -387,6 +386,29 @@ def fill_in_gaps(addresses):
         .agg(pandas.Series.mode)
         .set_index("id")
     )
+
+    # sometimes neighbouring polygons belong to different towns (in equal share)
+    # and more than one value is ‘the most common’
+
+    def _unpack(value):
+        if pandas.api.types.is_list_like(value):
+            if value.size > 0:
+                value = value[0]
+            else:
+                value = None
+        try:
+            value = int(value)
+        except (TypeError, ValueError):
+            if pandas.isna(value):
+                value = None
+            else:
+                value = str(value)
+        return value
+
+    neighbours["postcode_right"] = neighbours["postcode_right"].apply(_unpack)
+    neighbours["postcode_right"] = neighbours["postcode_right"].astype("Int64")
+    neighbours["city_right"] = neighbours["city_right"].apply(_unpack)
+
     addresses = addresses.join(neighbours)
     addresses.loc[addresses.postcode.isna(), "postcode"] = addresses["postcode_right"]
     addresses.loc[addresses.city.isna(), "city"] = addresses["city_right"]
@@ -401,8 +423,6 @@ def fill_in_gaps(addresses):
             "geometry",
         ]
     ]
-
-    # 3) TODO: fill in street names (maybe)
 
     return addresses
 
