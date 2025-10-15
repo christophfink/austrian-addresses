@@ -184,7 +184,6 @@ def download_postcode_areas():
     postcode_areas = geopandas.GeoDataFrame(postcode_areas, crs="EPSG:4326")
     postcode_areas["geometry"] = postcode_areas["geometry"].normalize()
     postcode_areas = postcode_areas.drop_duplicates()
-    postcode_areas.to_file("/tmp/postcode_areas.gpkg")
 
     return postcode_areas
 
@@ -246,7 +245,6 @@ def download_municipalities():
     municipalities = geopandas.GeoDataFrame(municipalities, crs="EPSG:4326")
     municipalities["geometry"] = municipalities["geometry"].normalize()
     municipalities = municipalities.drop_duplicates()
-    municipalities.to_file("/tmp/municipalities.gpkg")
 
     return municipalities
 
@@ -335,7 +333,8 @@ def download_housenumbers(clip_polygon, postcode_areas, municipalities):
     addresses = geopandas.GeoDataFrame(addresses, crs="EPSG:4326")
     addresses["id"] = addresses.index
 
-    # fill in gaps
+
+def fill_in_gaps(addresses):
     # 1) set city from other records with the same postcode
     postcodes = (
         addresses[addresses.city.notnull()]
@@ -451,6 +450,8 @@ def main():
         ]
     ]
     voronoi_polygons = voronoi_polygons.clip(clip_polygon, keep_geom_type=True)
+
+    voronoi_polygons = fill_in_gaps(voronoi_polygons)
 
     output_filename = (
         OUTPUT_FILENAME.parent
