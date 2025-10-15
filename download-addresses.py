@@ -331,7 +331,9 @@ def download_housenumbers(clip_polygon, postcode_areas, municipalities):
     addresses["postcode"] = addresses["postcode"].astype("int")
 
     addresses = geopandas.GeoDataFrame(addresses, crs="EPSG:4326")
-    addresses["id"] = addresses.index
+    addresses["geometry"] = addresses.normalize()
+    addresses = addresses.drop_duplicates(["geometry"])
+    addresses = addresses.drop_duplicates(["street", "housenumber", "postcode", "city"])
 
 
 def fill_in_gaps(addresses):
