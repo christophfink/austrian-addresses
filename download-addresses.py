@@ -440,10 +440,8 @@ def main():
         predicate="contains",
         lsuffix="",
     )
-    voronoi_polygons["id"] = voronoi_polygons.index
     voronoi_polygons = voronoi_polygons[
         [
-            "id",
             "street",
             "housenumber",
             "postcode",
@@ -454,6 +452,9 @@ def main():
     voronoi_polygons = voronoi_polygons.clip(clip_polygon, keep_geom_type=True)
 
     voronoi_polygons = fill_in_gaps(voronoi_polygons)
+    voronoi_polygons = voronoi_polygons.dissolve(
+        ["street", "housenumber", "postcode", "city"]
+    )
 
     output_filename = (
         OUTPUT_FILENAME.parent
