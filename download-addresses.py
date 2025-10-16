@@ -471,10 +471,10 @@ def main():
         ]
     ]
     voronoi_polygons = voronoi_polygons.clip(clip_polygon, keep_geom_type=True)
-
     voronoi_polygons = fill_in_gaps(voronoi_polygons)
     voronoi_polygons = voronoi_polygons.dissolve(
-        ["street", "housenumber", "postcode", "city"]
+        ["street", "housenumber", "postcode", "city"],
+        dropna=False,
     )
 
     output_filename = (
