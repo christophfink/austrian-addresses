@@ -2,12 +2,9 @@
 
 name: Reactivate scheduled workflow
 on:
-  workflow_call:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
   schedule:
-    - cron: "1 2 */59 * *"
+    - cron: "1 2 */59 * *"  # every 59th day
 
 permissions:
   contents: write

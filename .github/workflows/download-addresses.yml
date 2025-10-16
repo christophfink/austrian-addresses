@@ -2,12 +2,9 @@
 
 name: Download addresses
 on:
-  workflow_call:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
   schedule:
-    - cron: "5 4 13 * *"  # ‘monthly’
+    - cron: "5 4 13 * *"  # about ‘monthly’
 
 permissions:
   contents: read
