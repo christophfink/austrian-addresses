@@ -1,2 +1,3 @@
 overpy
 geopandas
+pandas<3
